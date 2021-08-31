@@ -3,5 +3,6 @@ output "qnap_glacier_user_access_key" {
 }
 
 output "qnap_glacier_user_secret_access_key" {
-  value = aws_iam_access_key.qnap_glacier_iam_user_access_key.secret
+  value     = aws_iam_access_key.qnap_glacier_iam_user_access_key.secret
+  sensitive = true
 }
