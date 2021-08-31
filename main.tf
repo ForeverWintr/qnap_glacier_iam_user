@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "qnap_glacier_iam_user_policy_document" {
       # "glacier:AddTagsToVault",  # Not required for archive management
       "glacier:CompleteMultipartUpload",
 
-      "glacier:CreateVault",             # Annoyingly, required by QNAP implementation
+      "glacier:CreateVault", # Annoyingly, required by QNAP implementation
       "glacier:DeleteArchive",
 
       # "glacier:DeleteVault",  # Not required for archive management
@@ -66,19 +66,19 @@ resource "aws_iam_policy" "qnap_glacier_iam_user_policy" {
   description = "Policy for QNAP Glacier User"
   name        = "QNAPGlacierIAMUserPolicy-${var.qnap_vault_name}"
   path        = "/automation/"
-  policy      = "${data.aws_iam_policy_document.qnap_glacier_iam_user_policy_document.json}"
+  policy      = data.aws_iam_policy_document.qnap_glacier_iam_user_policy_document.json
 }
 
 resource "aws_iam_user" "qnap_glacier_iam_user" {
-  name = "${var.qnap_glacier_user_name == "" ? "${var.qnap_vault_name}-user" : var.qnap_glacier_user_name}"
+  name = var.qnap_glacier_user_name == "" ? "${var.qnap_vault_name}-user" : var.qnap_glacier_user_name
   path = "/automation/"
 }
 
 resource "aws_iam_access_key" "qnap_glacier_iam_user_access_key" {
-  user = "${aws_iam_user.qnap_glacier_iam_user.name}"
+  user = aws_iam_user.qnap_glacier_iam_user.name
 }
 
 resource "aws_iam_user_policy_attachment" "qnap_glacier_iam_user_policy_attachment" {
-  user       = "${aws_iam_user.qnap_glacier_iam_user.name}"
-  policy_arn = "${aws_iam_policy.qnap_glacier_iam_user_policy.arn}"
+  user       = aws_iam_user.qnap_glacier_iam_user.name
+  policy_arn = aws_iam_policy.qnap_glacier_iam_user_policy.arn
 }
